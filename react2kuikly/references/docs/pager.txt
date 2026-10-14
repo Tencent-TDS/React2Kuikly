@@ -1,0 +1,38 @@
+检索信息：Pager组件、@Page注解、body方法、PagerData
+
+Pager组件基础信息：
+1. Pager是Kuikly页面的入口类，类似Android的Activity和iOS的ViewController
+2. 每个Pager必须使用@Page注解注册，格式为@Page(\"页面名称\")
+3. 必须实现body()方法返回页面UI结构描述
+4. 通过pagerData属性获取页面参数，包含：
+ - 基础参数：页面尺寸、设备信息等
+ - 业务参数：通过params字段获取Native传递的扩展参数
+
+完整示例代码：
+```kotlin
+@Page(\"DemoPage\") // 使用@Page注解注册页面
+internal class DemoPage : Pager() {
+ override fun body(): ViewBuilder {
+ return {
+ Text {
+ attr {
+ text(\"页面宽度：${pagerData.pageViewWidth}\")
+ fontSize(14f)
+ }
+ }
+ }
+ }
+
+ override fun created() {
+ super.created()
+ // 获取业务参数示例
+ val userId = pagerData.params.optString(\"userId\")
+ }
+}
+```
+
+注意事项：
+1. 建议为业务参数创建PagerData扩展类
+2. 页面尺寸参数会自动适配容器尺寸
+3. @Page注解的页面名称需要保持唯一
+4. body()方法返回的是UI结构描述闭包，不是直接创建视图

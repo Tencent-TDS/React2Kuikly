@@ -1,0 +1,55 @@
+检索信息：DatePicker组件
+
+DatePicker组件是基于Scroller实现的日期选择器，支持通过chooseEvent事件获取用户选择的日期数据。选择后的数据会以DatePickerDate对象形式返回，包含时间戳和日期结构体信息。
+
+完整示例代码：
+```kotlin
+@Page(\"date_picker_demo\")
+class DatePickerDemoPage : BasePager() {
+ // 定义可观察的日期对象
+ private var selectedDate: Date by observable(Date(0, 0, 0))
+ private var timestamp: Long by observable(0L)
+
+ override fun body(): ViewBuilder {
+ val context = this
+ return {
+ Column {
+ Text {
+ attr {
+ // 显示格式化后的日期和时间戳
+ text(\"选中日期：${selectedDate.year}年${selectedDate.month+1}月${selectedDate.day}日\")
+ }
+ }
+ Text {
+ attr {
+ text(\"时间戳：$timestamp\")
+ }
+ }
+ DatePicker {
+ attr {
+ width(300f)
+ backgroundColor(Color.WHITE)
+ borderRadius(8f)
+ padding(16f)
+ }
+ event {
+ chooseEvent { result ->
+ // 处理日期选择结果
+ result.date?.let {
+ selectedDate = it
+ }
+ timestamp = result.timeInMillis
+ }
+ }
+ }
+ }
+ }
+ }
+}
+```
+
+注意事项：
+1. Date结构中的month字段范围是0-11（0表示1月），需要+1后显示给用户
+2. timeInMillis字段可直接用于时间戳相关的计算
+3. 建议通过observable实现数据绑定，实现选择结果的实时更新
+4. 组件宽度建议设置为固定值，避免布局错位

@@ -1,0 +1,39 @@
+【PAG组件】
+
+依赖引入：import com.tencent.kuikly.core.views.PAG
+
+完整示例代码：
+```kotlin
+PAG {
+ attr {
+ size(300f, 200f)
+ src(\"https://example.com/animation.pag\")
+ repeatCount(0) // 无限循环
+ autoPlay(true)
+ replaceLayerContents(
+ PAGReplaceItem(
+ type = PAGReplaceItem.TYPE_TEXT,
+ layerName = \"text_layer\",
+ text = \"Hello Kuikly\"
+ ),
+ PAGReplaceItem(
+ type = PAGReplaceItem.TYPE_IMAGE,
+ layerIndex = 1,
+ imageFileAsset = ImageUri.pageAssets(\"new_image.png\").toUrl(pageName)
+ )
+ )
+ }
+ event {
+ animationStart { /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 动画开始回调 aif/ }
+ animationEnd { /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 动画结束回调 aif/ }
+ loadFailure { /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 加载失败处理 aif/ }
+ }
+}
+```
+
+注意事项：
+1. 图片替换时需确保只指定一种图片来源（imageFilePath/imageFileAsset/imageViewRef）
+2. repeatCount=0 表示无限循环播放
+3. 非自动播放时需要手动调用play()方法
+4. 替换文本图层时需要确保图层名称与PAG文件中的图层名一致
+5. 使用本地资源时建议通过ImageUri.pageAssets()获取资源路径

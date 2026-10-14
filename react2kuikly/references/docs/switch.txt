@@ -1,0 +1,52 @@
+检索信息：Switch组件
+
+依赖引入：
+```kotlin
+import com.tencent.kuikly.core.views.Switch
+import com.tencent.kuikly.core.base.Color
+```
+
+完整示例代码：
+```kotlin
+@Page(\"demo_page\")
+internal class SwitchExamplePage : BasePager() {
+ override fun body(): ViewBuilder {
+ return {
+ // 基础开关
+ Switch {
+ attr {
+ isOn(true) // 设置初始状态为开启
+ onColor(Color.GREEN) // 开启状态背景色
+ unOnColor(Color.GRAY) // 关闭状态背景色
+ thumbColor(Color.WHITE) // 滑块颜色
+ thumbMargin(2f) // 滑块边距
+ margin(20f) // 外边距
+ }
+ event {
+ switchOnChanged { isOn ->
+ // 开关状态变化回调
+ KLog.i(\"Switch\", \"Current state: $isOn\")
+ }
+ }
+ }
+
+ // 自定义风格开关
+ Switch {
+ attr {
+ height(20f) // 自定义高度
+ thumbColor(Color.BLUE) // 蓝色滑块
+ thumbMargin(-5f) // 负边距实现更大滑块
+ unOnColor(Color.LTGRAY) // 浅灰色关闭背景
+ }
+ }
+ }
+ }
+}
+```
+
+注意事项：
+1. `thumbMargin`默认值为2f，设置负值可实现更大的滑块效果
+2. 开关尺寸自适应，只需设置高度（width会自动计算）
+3. 支持所有基础属性和事件（如margin、click等）
+4. 开关动画默认开启，可通过`animate(false)`关闭
+5. iOS/Android平台表现一致，无需处理平台差异

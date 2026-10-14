@@ -1,0 +1,28 @@
+检索信息：网络请求 并发网络请求
+
+依赖引入：import com.example.business.bizkuikly.pages.atoms.JS2Kuikly.executeConcurrentRequests
+
+使用示例：
+
+```kotlin
+        // 创建网络请求
+        val request = NetworkInfo(
+            module = "music.musichallAlbum.AlbumSongList",
+            method = "GetAlbumSongList",
+            params = JSONObject().apply {
+                put("params1", albumMid)
+            }.toString()
+        )
+
+        // 执行网络请求
+        executeConcurrentRequests(listOf(request)) { responses ->
+            responses?.firstOrNull()?.let { response ->
+                if (response.optInt("code") == 0 ) {
+                    // 请求成功
+                } else {
+                    // 请求失败
+                }
+            }
+        }
+
+```

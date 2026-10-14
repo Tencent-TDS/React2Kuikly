@@ -1,0 +1,97 @@
+检索信息：Scroller组件
+
+依赖引入：import com.tencent.kuikly.core.views.Scroller
+
+基础属性：
+1. scrollEnable：控制滑动开关（默认true）
+```kotlin
+Scroller {
+ attr { scrollEnable(false) }
+}
+```
+
+2. bouncesEnable：回弹效果开关（默认true）
+```kotlin
+Scroller {
+ attr { bouncesEnable(false) }
+}
+```
+
+3. showScrollerIndicator：滚动条显示控制
+```kotlin
+Scroller {
+ attr { showScrollerIndicator(false) } // Android需注意API>=29生效
+}
+```
+
+4. flexDirection：滚动方向设置
+```kotlin
+Scroller {
+ attr { flexDirection(FlexDirection.ROW) } // 水平滚动
+}
+```
+
+5. pagingEnable：分页模式开关
+```kotlin
+Scroller {
+ attr { pagingEnable(true) } // 启用分页效果
+}
+```
+
+基础事件：
+```kotlin
+Scroller {
+ event {
+ scroll { params ->
+ // params包含offsetX/Y、content尺寸、视图尺寸等
+ }
+ scrollEnd { // 滚动结束回调 }
+ dragBegin { // 拖拽开始 }
+ dragEnd { // 拖拽结束 }
+ contentSizeChanged { width, height -> }
+ }
+}
+```
+
+核心方法：
+1. 滚动到指定位置
+```kotlin
+scrollerRef.setContentOffset(
+ offsetX = 100f, 
+ offsetY = 0f,
+ animated = true
+)
+```
+
+2. 设置内容边距
+```kotlin
+scrollerRef.setContentInset(
+ top = 20f, 
+ bottom = 20f,
+ animated = true
+)
+```
+
+完整示例代码：
+```kotlin
+Scroller {
+ attr {
+ height(200f)
+ margin(16f)
+ flexDirectionColumn()
+ showScrollerIndicator(true)
+ }
+ event {
+ scroll {
+ Log.d(\"偏移量\", \"X:${it.offsetX} Y:${it.offsetY}\")
+ }
+ }
+ // 子组件...
+}
+```
+
+注意事项：
+1. 水平滚动需设置flexDirection(FlexDirection.ROW)
+2. Android平台showScrollerIndicator需要API>=29才能生效
+3. 使用pagingEnable时需确保子元素尺寸与容器尺寸匹配
+4. 绝对定位元素需要设置positionType(ABSOLUTE)

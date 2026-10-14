@@ -1,0 +1,103 @@
+【Tabs组件】
+
+依赖引入： 
+```kotlin
+import com.tencent.kuikly.core.views.Tabs
+import com.tencent.kuikly.core.views.TabItem
+import com.tencent.kuikly.core.views.PageList
+```
+
+完整示例代码：
+```kotlin
+@Page(\"TabsExamplePage\")
+internal class TabsExamplePage : BasePager() {
+ // 状态管理
+ private var pageListRef : ViewRef<PageListView<*, *>>? = null
+ private var scrollParams : ScrollParams? by observable(null)
+ private var tabDataList by observableList<TabItemData>()
+
+ override fun body(): ViewBuilder {
+ return {
+ // Tabs组件定义
+ Tabs {
+ attr {
+ height(50f) // 必须指定高度
+ defaultInitIndex(0) // 默认选中第一个tab
+ indicatorInTabItem { // 自定义指示器
+ View {
+ attr {
+ absolutePosition(left = 15f, right = 15f, bottom = 5f)
+ height(6f)
+ borderRadius(3f)
+ backgroundColor(Color.BLUE)
+ }
+ }
+ }
+ scrollParams(scrollParams) // 绑定滚动参数
+ }
+
+ // 动态生成Tab项
+ vfor({tabDataList}) { tabItem ->
+ TabItem { state ->
+ attr {
+ margin(horizontal = 10f)
+ allCenter()
+ }
+ event {
+ click { // 点击切换页面
+ pageListRef?.view?.scrollToPageIndex(tabItem.index, true)
+ }
+ }
+ Text {
+ attr {
+ text(tabItem.tabTitle)
+ fontSize(17f)
+ color(if (state.selected) Color.BLUE else Color.BLACK)
+ }
+ }
+ }
+ }
+ }
+
+ // 关联的PageList组件
+ PageList {
+ attr {
+ flexDirectionRow()
+ pageItemWidth(pagerData.pageViewWidth)
+ pageItemHeight(pagerData.pageViewHeight - 94f) // 计算可用高度
+ }
+ ref { pageListRef = it }
+ event {
+ scroll { scrollParams = it } // 同步滚动参数
+ }
+ // 生成页面内容
+ vfor({tabDataList}) { item ->
+ View {
+ attr {
+ backgroundColor(item.pageBgColor)
+ allCenter()
+ }
+ Text(text = \"pageIndex${item.index}\", fontSize = 30f)
+ }
+ }
+ }
+ }
+ }
+}
+```
+
+核心属性说明：
+1. `scrollParams`：必须绑定来自PageList的滚动参数实现联动
+2. `indicatorInTabItem`：自定义指示器样式（需设置绝对定位）
+3. `defaultInitIndex`：设置默认选中项
+
+事件联动机制：
+- Tabs点击事件通过`pageListRef.scrollToPageIndex`控制PageList翻页
+- PageList滚动事件通过`scrollParams`参数同步到Tabs组件
+
+注意事项：
+1. Tabs必须与PageList配合使用才能实现完整功能
+2. 必须为Tabs组件显式设置高度（height属性）
+3. 指示器建议使用absolutePosition定位实现自适应宽度
+4. 通过vfor指令动态生成TabItem和对应页面内容
+5. 状态管理使用observable/observableList实现数据驱动更新

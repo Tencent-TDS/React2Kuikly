@@ -1,0 +1,467 @@
+【react native转化成kuikly业务逻辑规则】
+1. 客户端接口调用
+关键字：M.client.invoke
+M.client.invoke('ui', 'openUrl', {
+	url:item.Scheme,
+});
+kuikly
+第一个参数是ui，在 kuikly 中，针对 UI 相关的原生调用，在BasePage页面中使用 uiPlugin?.openNative() 方法，
+对应kuikly代码
+
+// 引入依赖
+import com.example.business.bizkuikly.base.bridge.uiPlugin
+uiPlugin?.openNative(
+  "ui",
+  "openUrl",
+  JSONObject().apply {
+    put(
+      "url",
+      item.Scheme
+    )
+  })
+2. 客户端schema调用
+react native关键字：M.client.openScheme
+M.client.openScheme(item.Scheme);
+
+kuikly
+uiPlugin?.openNative(item.Scheme)
+3. 客户端事件监听
+react native
+关键字：M.client.on
+
+M.client.on('reserve_v2_update', (ret) => {
+	// 事件回调
+});
+kuikly
+// 引入依赖
+import com.example.business.bizkuikly.base.bridge.nativeEvent
+// 监听事件
+nativeEvent?.on("reserve_v2_update")
+// 在BasePage页面里重写onNativeEvent方法
+override fun onNativeEvent(event: String, data: JSONObject?) {
+    super.onNativeEvent(event, data)
+    when (event) {
+        "reserve_v2_update" -> {
+            // 事件回调
+        }
+    }
+}
+4. 登录相关
+react native
+关键字：
+拉起登录 M.user.login
+判断是否登录M.user.isLogin
+获取uinM.user.getUin
+
+M.user.isLogin(ret => {
+  if (ret) {
+   // 执行登录成功的回调
+  } else {
+    M.user.login({}, r => {
+      // 执行登录成功的回调
+    });
+  }
+}, true);
+在这个例子中，先用M.user.isLogin判断用户是否登录，如果没有登录，调用M.user.login拉起登录
+
+kuikly
+kuikly中用getUin替代isLogin，uin有值则认为登录成功了，若uin没有值，则认为未登录
+
+//头部引入模块
+import com.example.business.bizkuikly.data.feat.scheme.ui.Login
+val uin = syncPlugin?.getUin()?.toLongOrNull();
+if (uin?.isEmpty() == true) {
+//uin没有值，则认为未登录，拉登录
+//拼接客户端schema
+val scheme = Login.Builder().force(true).build().scheme()
+// 调用客户端schema
+uiPlugin?.openNative(scheme) {
+val result = JsonResult(it)
+if (result.isSuccess()) {
+// 执行登录成功的回调
+}
+}
+
+获取cookieM.user.getCookies
+react native
+M.user.getCookies(cookies => {
+});
+kuikly
+// 引入依赖文件
+import com.example.business.bizkuikly.utils.BizPicUtil
+// 调用对应方法
+cookies = BizPicUtil.getCookies()
+syncPlugin?.getUin()?.toLongOrNull() ?: 0L
+5. 换肤
+react native
+M.client.themeChange(() => {
+this.setState({});
+});
+
+kuikly
+可以不用写，省略这个逻辑即可
+
+6. 跟肤
+react native
+react native定义了一个M.themeStyle对象
+
+M.themeStyle = {
+	c_txt1: {
+		color: colors.skin_text_main_color, //默认字色
+	},
+	c_txt2: {
+		color: colors.skin_text_sub_color, //说明字色
+	},
+	c_txt3: {
+		color: colors.skin_highlight_color, //高亮色
+	},
+	c_txt4: {
+		color: '#ff6600', // 强调色
+	},
+	c_txt_disabled: {
+		color: colors.skin_text_gray_color, //文字置灰
+	},
+	c_txt3_disabled: {
+		color: colors.skin_highlight_disabled_color, //高亮色置灰
+	},
+	c_bg1: {
+		backgroundColor: this.themeType ? '#fafafa' : 'transparent', //空
+	},
+	c_bg2: {
+		backgroundColor: colors.skin_mask_color, //蒙层
+	},
+	c_bg3: {
+		backgroundColor: colors.skin_floor_color, //遮挡色
+	},
+	c_bg4: {
+		backgroundColor: colors.skin_text_main_color, //默认字色
+	},
+	c_bg5: {
+		backgroundColor: colors.skin_sub_mask_color,
+	},
+	c_bg6: {
+		backgroundColor: colors.skin_highlight_color, //高亮色
+	},
+	c_bg_loading: {
+		backgroundColor: 'rgba(203,203,203,0.2)', //骨架图
+	},
+	c_bor1: {
+		borderColor: colors.skin_divider_color, //默认边框色
+	},
+	c_bor2: {
+		borderColor: colors.skin_highlight_color, //高亮色
+	},
+	c_bor3: {
+		borderColor: colors.skin_text_sub_color, //跟随说明文字色，一般用于箭头
+	},
+	c_btn1: {
+		color: colors.skin_text_main_color, // 空心按钮
+		borderColor: colors.skin_button_border_color,
+	},
+	c_btn2: {
+		color: this.themeType ? '#fff' : colors.skin_button_text_color, // 实心按钮
+		backgroundColor: colors.skin_highlight_color,
+	},
+	c_btn3: {
+		color: colors.skin_button_icon_color, // 13.2及以上支持，新按钮规范
+		backgroundColor: colors.skin_button_highlight_color, // 13.2及以上支持，新按钮规范
+	},
+	c_btn4: {
+		color: colors.skin_text_main_color,
+		backgroundColor: colors.skin_button_mask_color,
+	},
+	c_input: {
+		color: colors.skin_text_main_color,
+		backgroundColor: colors.skin_search_content_color,
+	},
+ }
+组件样式中用M.themeStyle中的变量来指定跟肤的样式
+如
+
+<Text style={[{
+        fontSize: 16,
+        lineHeight: 18,
+        numberOfLines: 1,
+        flex: 1,
+    }, themeStyle.c_txt1]}>{item.Title}</Text>
+kuikly
+直接给组件添加对应的色值属性，themeStyle.c_txt1中用客户端skin_text_main_color色值给Text设置了color属性，kuikly获取客户端特定色值的方式是ctx.buildThemedColor，其中ctx对应的是BasePage的上下文，所以对应的kuikly实现是
+
+Text {
+  attr {
+    fontSize(32f.pxw())
+    lineHeight(36f.pxw())
+    flex(1f)
+    color(ctx.buildThemedColor("skin_text_main_color"))
+  }
+}
+backgroundColor等同理
+如react native代码中
+
+c_bg2: {
+  backgroundColor: colors.skin_mask_color, //蒙层
+}
+<View style={themeStyle.c_bg2}></View>
+对应的kuikly实现就是
+
+View {
+  backgroundColor(ctx.buildThemedColor("skin_mask_color"))
+}
+7. spd上报
+react native
+M.spd.init
+M.spd.send
+M.spd.mark
+
+kuikly
+M.spd相关的代码kuikly都可以直接不写
+
+ 
+
+8. 点击上报
+react native
+关键字：clickReport
+
+clickReport('1019189', { string13: id })
+kuikly
+// 引入reportModule模块
+import com.example.business.bizkuikly.base.bridge.reportModule
+
+// 在BasePage可以直接用reportModule
+reportModule.click(
+    id = "1019189", mutableMapOf(
+        "string13" to id,
+    )
+)
+9. 曝光上报
+react native
+关键字：showReport
+
+showReport('5018895', { str5: item.eUin });
+kuikly
+// 引入reportModule模块
+import com.example.business.bizkuikly.base.bridge.reportModule
+
+// 在BasePage可以直接用reportModule
+reportModule.exposure(
+    id = "5021514", mutableMapOf(
+        "str5" to (item.eUin),
+    )
+)
+10. 获取页面参数
+react native
+关键字M.getParam
+如
+
+this.EncUin = M.getParam('EncUin') || ''
+意思是获取初始化参数中名为EncUin的参数，如果没有取到，用默认值空字符串。
+
+kuikly
+对应的kuikly实现是
+
+routerInfo?.params?.optString("EncUin", "") ?: ""
+kuikly通过BasePage中的routerInfo?.params存储客户端的初始化参数，是一个JSONObject类型
+
+11. 拉取后台数据
+react native
+关键字
+M.client.fetchModuleCGI
+M.client.prefetchModuleCGI
+
+M.client.fetchModuleCGI(
+{
+  data: {
+    req_0: {
+      module: 'music.recommend.TrackRelationServer',
+      method: 'GetSimilarSongs',
+      param: {
+        songid,
+        Source: 1,
+        extra_info: {
+          needsong_num: '3',
+        },
+      },
+    },
+  },
+},
+  ret=>{
+    // 回调
+  }
+)
+kuikly
+对应的kuikly代码
+
+// 引入相关文件
+import com.example.business.bizkuikly.data.model.IJCEReqModel
+import com.example.business.bizkuikly.data.model.IJCERspModel
+import com.tencent.kuikly.core.nvi.serialization.json.JSONObject
+// 声明一个定义请求参数的类
+internal class GetRecommendReq(
+    val songId: Long,
+) : IJCEReqModel, IJCERspModel<GetRecommendReq> {
+    override fun encode(): JSONObject {
+        return JSONObject().apply {
+            put("songid", songId)
+            put("Source", 1)
+            put("extra_info", JSONObject().apply {
+                put("needsong_num", "3")
+            })
+        }
+    }
+
+    override fun decode(data: JSONObject): GetRecommendReq {
+        return this
+    }
+}
+
+// 发起请求，引入NetworkInfo模块
+import com.example.business.bizkuikly.data.NetworkInfo
+
+val networkInfo = NetworkInfo(
+  module = "music.recommend.TrackRelationServer",
+  method = "GetSimilarSongs",
+  params = GetRecommendReq(curSongId)
+    .encode().toString()
+)
+getPager().networkModule.jsonModuleRequest(networkInfo) { json ->
+  // 回调
+	val code = json?.optLong("code")
+	val data = json?.optJSONObject("data")
+	val rsp = data?.let {
+		GetDataRsp()
+			.decode(it)
+	}
+	// 对rsp做处理
+}
+12. 工具函数
+12.1 fixUrl
+react native
+关键字fixUrl
+
+<Image resizeMode="cover" src={M.fixUrl(item.PicURL)} style={styles.media_list__img} />
+kuikly
+不用fixUrl，直接用item.PicURL
+
+12.2 getPic
+react native
+关键字getPic
+
+<Image style={style.my_task_list__img} src={M.getPic('album', album?.pmid, 150)} />
+kuikly
+// 引入依赖文件
+import com.example.business.bizkuikly.utils.BizPicUtil
+// 调用对应方法
+BizPicUtil.getPic("album", album.optString("pmid"), 150)
+13. 现有公共组件
+13.1 PageLoading组件
+react native关键字PageLoading
+<PageLoading color={themeStyle?.c_txt1?.color} />
+kuikly
+kuikly对于PageLoading有实现对应的组合组件，可以直接复用
+// 引用组件
+import com.example.business.bizkuikly.pages.feat.components.Loading
+// 调用
+Loading {}
+
+
+13.2 Empty组件
+react native
+关键字Empty
+<Empty content={{ desc: '暂无数据' }} />
+kuikly
+kuikly对于Empty有实现对应的组合组件，可以直接复用
+// 引用组件
+import com.example.business.bizkuikly.pages.feat.components.Empty
+// 调用
+Empty {}
+
+13.3 ErrorPage组件
+react native
+关键字ErrorPage
+<ErrorPage
+	title="内容拉取失败"
+	onClick={() => {
+		 // 重试
+	}
+/>
+kuikly
+kuikly对于ErrorPage有实现对应的组合组件，可以直接复用
+// 引用组件
+import com.example.business.bizkuikly.pages.feat.components.Error
+// 调用
+Error {
+    event {
+        onRetryClick = {
+            // 重试
+        }
+    }
+}
+
+14. 平台信息
+关键字Platform
+react native
+Platform.OS == 'android'
+kuikly
+pagerData.isAndroid
+react native
+Platform.OS == 'ios'
+kuikly
+pagerData.isIOS
+
+15. 样式转化
+react native中的样式的数值在转化成kuikly的数值时都乘以2，并用float值，最后再.pxw()
+
+react native
+media_list__cover: {
+	position: 'relative',
+	marginRight: 16,
+	width: 60,
+	height: 60,
+},
+kuikly
+// BasePage中重写uiDesign方法
+override fun uiDesign(): UIDesign {
+    return UIDesign(780F, 1624F)
+}
+
+View {
+	attr {
+		positionRelative()
+		marginRight(32f.pxw())  // 16 * 2
+		width(120f.pxw())       // 60 * 2
+		height(120f.pxw())      // 60 * 2
+	}
+}
+16. 本地存储
+关键字AsyncStorage.getItem
+AsyncStorage.getItem(key).then(res => {
+})
+kuikly
+res = otherPlugin?.readGlobalData(ReadGlobalDataReq("kuikly", key))?.content ?: ""
+关键字AsyncStorage.setItem
+AsyncStorage.setItem(key, value)
+kuikly
+res = otherPlugin?.writeGlobalData(WriteGlobalDataReq("kuikly", key, value.toString()))
+
+17.时间
+react native
+Date.now()
+kuikly
+CalendarHelper.getInstance().newCalendarInstance().timeInMillis()
+
+18. 版本判断
+react native
+关键字M.compare(M.client.appVer, '140305') >= 0
+utils.compare(M.client.appVer, '140305') >= 0
+
+kuikly
+因为kuikly是在高版本才上的，所以不用考虑低版本，可以按照当前版本大于目标版本来做逻辑，如上面的react native代码的条件是客户端版本大于等于14.3.5，这里kuikly默认大于14.3.5
+
+19. 头部导航栏
+react native中可以用客户端提供的头部导航栏，kuikly中需要自己实现
+所以关于react native中头部导航栏相关的调用，在kuikly中都不需要，如
+M.client.invoke('ui', 'hideMiniPlayer', {});
+M.client.invoke('ui', 'refreshTitle', { title: '访客' });
+
+20.不要使用示例代码中和kuikly文档中没出现过的语法
+比如suspend,launch,slot等

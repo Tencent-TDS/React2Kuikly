@@ -1,0 +1,48 @@
+检索信息：Hover组件
+
+Hover组件是Kuikly框架中用于实现列表滚动时自动悬停置顶功能的专用视图组件，主要包含以下核心属性：
+
+1. bringIndex属性
+作用：设置置顶层级（同一列表多个HoverView时生效）
+类型：Int
+特性：数值越大层级越高，层级高的HoverView会覆盖在层级低的组件上方
+
+2. hoverMarginTop属性 
+作用：设置悬停时距离列表顶部的偏移量
+类型：Float
+默认值：0（紧贴列表顶部）
+
+完整示例代码：
+```kotlin
+List {
+ attr { flex(1f) }
+ 
+ // 基础列表内容...
+ 
+ Hover {
+ attr {
+ absolutePosition(top = 300f) 
+ height(50f)
+ backgroundColor(Color.RED)
+ bringIndex(2) // 设置高层级
+ hoverMarginTop(20f) // 悬停时距顶部20px
+ }
+ }
+ 
+ Hover {
+ attr {
+ absolutePosition(top = 600f)
+ height(50f)
+ backgroundColor(Color.BLUE)
+ bringIndex(1) // 设置低层级
+ }
+ }
+}
+```
+
+注意事项：
+1. 必须作为List/PagerList等滚动容器的直接子组件使用
+2. 建议配合absolutePosition定位使用以确保正确的位置计算
+3. 多个HoverView共存时，需要通过bringIndex明确层级关系
+4. 悬停触发条件需要组件自身进入/离开可视区域才会生效
+5. iOS和Android平台表现可能存在细微差异，需实际设备验证

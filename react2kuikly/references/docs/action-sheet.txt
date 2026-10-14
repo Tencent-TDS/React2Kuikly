@@ -1,0 +1,58 @@
+【ActionSheet组件】
+
+依赖引入：无需额外引入，ActionSheet为内置组件
+
+完整示例代码：
+```kotlin
+@Page(\"demo_page\")
+internal class TestPage : BasePager() {
+ private var showActionSheet by observable(true)
+
+ override fun body(): ViewBuilder {
+ val ctx = this
+ return {
+ ActionSheet {
+ attr {
+ showActionSheet(ctx.showActionSheet)
+ descriptionOfActions(\"操作描述\")
+ actionButtons(\"取消\", \"操作1\", \"操作2\")
+ actionButtonsCustomAttr(
+ cancelButtonTitleAttr = { color(Color.RED) },
+ buttonsAttr = { color(Color.BLUE) }
+ )
+ }
+ event {
+ clickActionButton { index ->
+ when (index) {
+ 0 -> ctx.showActionSheet = false
+ 1 -> println(\"操作1点击\")
+ 2 -> println(\"操作2点击\")
+ }
+ }
+ clickBackgroundMask {
+ ctx.showActionSheet = false
+ }
+ }
+ }
+ }
+ }
+}
+```
+
+属性说明：
+1. showActionSheet：控制显示/隐藏（必须）
+2. descriptionOfActions：操作描述文本
+3. actionButtons：设置按钮标题（第一个参数为取消按钮）
+4. actionButtonsCustomAttr：自定义按钮样式
+5. inWindow：是否全屏显示（默认false）
+
+事件说明：
+1. clickActionButton：按钮点击回调（index=0对应取消按钮）
+2. clickBackgroundMask：背景蒙层点击事件
+3. alertDidExit：完全退出后的回调
+
+注意事项：
+1. 必须使用showActionSheet属性控制显示状态
+2. actionButtons至少需要包含取消按钮
+3. 自定义UI时需设置customContentView/customBackgroundView
+4. 安卓端需注意蒙层点击事件的处理逻辑

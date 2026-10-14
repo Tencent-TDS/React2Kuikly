@@ -1,0 +1,19 @@
+检索信息：JSB执行（Music.client.open）
+js源码：
+Music.client.open('media', 'playMV', { vid: replayVid }, res => {
+      if (+res.code !== 0)
+        return;
+    });
+依赖引入：import com.example.business.bizkuikly.common.BizSchemeUtil
+
+使用示例：
+val params = JSONObject().apply {
+put("vid", replayVid)
+ }
+val basePager = PagerManager.getCurrentPager() as? JztBasePager
+val scheme = BizSchemeUtil.buildScheme("media", "playMV", params)
+        basePager?.openNative(url = scheme, callbackFn = {rsp->
+            //可以在这里拿到jsb的回调数据，然后做处理
+            val data = rsp?.optBoolean("result")
+        })
+

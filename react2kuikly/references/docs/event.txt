@@ -1,0 +1,64 @@
+检索信息：Event、基础事件、通用基础事件
+
+
+依赖引入： import com.tencent.kuikly.core.base.event.*
+
+
+介绍：
+在Kuikly中, 我们可以在组件的声明式API内, 调用event{}闭包来监听组件的事件。View、Button、Image等基础组件都支持event的单击、双击和长按等基础事件。
+
+Event示例代码：
+```kotlin
+View {
+    attr {
+        // 设置属性
+    }
+    event { 
+        // 点击事件
+        click { clickParams ->
+            // 处理点击事件
+        }
+        // 省略clickParams
+        click {
+            // 处理点击事件
+        }
+        // 双击事件
+        doubleClick { clickParams ->
+                val x = clickParams.x
+                val y = clickParams.y
+                //处理双击事件
+                ...
+        }
+        //处理长按事件
+        longPress {
+            
+        }
+        // 拖拽事件, 常用于实现跟手拖拽的效果
+        pan { panGestureParams -> 
+            
+        }
+        // 组件将要可见
+        willAppear { 
+            
+        }
+        // 组件完全可见
+        didAppear {
+            
+        }
+        // 组件将要不可见
+        willDisappear {
+
+        }
+        // 组件完全不可见
+        didDisappear {
+            
+        }
+        // percentage01为[0,1]的露出百分比，1为100%，0为0%]
+        appearPercentage { percentage01 -> 
+            
+        }
+    }
+}
+
+```
+

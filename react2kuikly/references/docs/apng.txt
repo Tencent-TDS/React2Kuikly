@@ -1,0 +1,30 @@
+检索信息：APNG组件、src、repeatCount、autoPlay、loadFailure、animationStart、animationEnd
+
+完整示例代码：
+```kotlin
+APNG {
+ attr {
+ size(200f, 200f)
+ src(\"https://example.com/animation.png\")
+ repeatCount(3) // 设置动画重复3次
+ autoPlay(false) // 禁止自动播放
+ }
+ event {
+ loadFailure {
+ // 处理加载失败逻辑
+ }
+ animationStart {
+ // 动画开始回调
+ }
+ animationEnd {
+ // 动画结束回调
+ }
+ }
+}
+```
+
+注意事项：
+1. 默认自动播放(autoPlay=true)，若需手动控制播放需设置为false
+2. repeatCount=0表示无限循环播放，设置为正整数可限制播放次数
+3. 支持网络资源和本地资源路径，本地资源需使用file://协议
+4. 必须监听loadFailure事件处理加载异常情况

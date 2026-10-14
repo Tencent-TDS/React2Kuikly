@@ -1,0 +1,118 @@
+【View组件】
+
+
+依赖引入： import com.tencent.kuikly.core.views.*
+
+
+View组件作为最基础的UI组件, 可嵌套使用，常用于组织子View如何布局。
+
+根据文档描述，每个Kuikly组件都包含以下基础属性和事件：
+一、基础属性
+分为样式属性和布局属性：
+
+1. 样式属性
+- backgroundColor() 设置背景颜色
+- backgroundLinearGradient(
+    Direction.TO_RIGHT,
+    ColorStop(Color.RED, 0f),
+    ColorStop(Color.GREEN, 0.3f), // 绿色渐变到30%后停止
+    ColorStop(Color.BLACK, 1f) // 30% ~ 100%是绿色到黑色渐变
+)
+enum class Direction(value: Int) {
+    TO_TOP(0),
+    TO_BOTTOM(1),
+    TO_LEFT(2),
+    TO_RIGHT(3),
+    TO_TOP_LEFT(4),
+    TO_TOP_RIGHT(5),
+    TO_BOTTOM_LEFT(6),
+    TO_BOTTOM_RIGHT(7),
+}
+设置线性渐变背景
+- boxShadow(BoxShadow(offsetX = 0f, offsetY = 0f, shadowRadius = 10f, shadowColor = Color.GREEN)) 设置阴影效果
+- borderRadius(BorderRectRadius(topLeftCornerRadius = 20f, topRightCornerRadius = 20f, bottomLeftCornerRadius = 5f, bottomRightCornerRadius = 20f)) 设置圆角
+- border(Border(
+        lineWidth = 2f.pxw(),
+        lineStyle = BorderStyle.SOLID,
+        color = ctx.buildThemedColor("skin_divider_color")
+)) 设置边框样式
+- visibility(false) 设置可见性
+- opacity(.4f) 设置透明度
+- touchEnable() 允许组件可触摸交互
+- transform(rotate = Rotate(45f)) 设置变换旋转位移
+- transform(scale = Scale(1.5f, 1.5f))设置变换缩放                
+- transform(translate = Translate(1f, 1f))// 往右移动100f, 往下移动100f
+- zIndex(99) 设置层级
+- overflow(true) 要对子组件超出的区域进行裁剪
+- keepAlive() 当前元素为可滚动的容器的直接孩子的话，组件被滑出屏幕外, 组件不会被可滚动容器移除。
+- animate() 设置动画参数
+- accessibility("播放按钮") 无障碍化属性
+- backgroundImage(src = "https://example.com/bg.png", resizeMode = ImageResizeMode.COVER) 设置背景图片
+- mask(MaskType.LINEAR_GRADIENT, Direction.TO_BOTTOM, listOf(ColorStop(Color.BLACK, 0f), ColorStop(Color.TRANSPARENT, 1f))) 设置渐变遮罩
+- capInsets(CapInsets(top = 10f, left = 10f, bottom = 10f, right = 10f)) 九宫格拉伸（适用于气泡/边框图）
+
+2. 布局属性
+- width()/height() 设置宽高
+- maxWidth()/maxHeight() 最大宽高
+- minWidth()/minHeight() 最小宽高
+- margin()
+- padding() Text元素不能设置padding
+- flexDirection() 布局方向
+- justifyContent() 主轴对齐
+- alignItems() 交叉轴对齐
+- alignSelf() 自身对齐方式
+- positionType(FlexPositionType.RELATIVE) 默认相对定位
+- positionType(FlexPositionType.ABSOLUTE) 绝对定位
+- left()/top()/right()/bottom() 定位偏移
+
+二、基础事件
+- click 点击事件
+- doubleClick 双击事件
+- longPress 长按事件
+- pan 拖动手势
+event { 
+    pan { panGestureParams -> 
+        val x = panGestureParams.x // 相对于被拖拽的组件的坐标x
+        val y = panGestureParams.y // 相对于被拖拽的组件的坐标y
+        val state = panGestureParams.state //拖拽状态："start", "move", "end"
+        val pageX = panGestureParams.pageX //拖拽点相对于页面的坐标x
+        val pageY = panGestureParams.pageY // 拖拽点相对于页面的坐标y
+    }
+}
+- animationCompletion 动画完成
+- layoutFrameDidChange 布局变化
+layoutFrameDidChange { frame ->
+ // 布局变化回调，Kuikly组件布局结束后，会触发
+    val x = frame.x // 组件在父容器的x值
+    val y = frame.y // 组件在父容器的y值
+    val width = frame.width // 组件宽度
+    val height = frame.height // 组件高度
+ }
+- willAppear/didAppear 出现事件
+- willDisappear/didDisappear 消失事件
+- appearPercentage 可见百分比
+
+注意事项：
+1. 所有组件都继承这些基础属性和事件
+2. 布局系统基于Flexbox实现
+3. 事件坐标系默认使用组件本地坐标系
+4. 动画系统需要配合animate()属性使用
+
+完整示例代码（通用View组件）：
+```kotlin
+View {
+ attr {
+ size(200f, 200f)
+ backgroundColor(Color.BLUE)
+ borderRadius(10f)
+ margin(10f)
+ flexDirection(FlexDirection.ROW)
+ }
+ 
+ event {
+ click { params ->
+ // 处理点击事件
+ }
+ }
+}
+```"

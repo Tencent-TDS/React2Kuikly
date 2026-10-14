@@ -1,0 +1,67 @@
+【Text组件】
+
+依赖引入： 
+```kotlin
+import com.tencent.kuikly.core.views.Text
+import com.tencent.kuikly.core.views.RichText
+import com.tencent.kuikly.core.views.Span
+```
+
+Text组件完整示例代码：
+```kotlin
+// 基础文本组件
+Text {
+ attr {
+ text(\"Hello Kuikly\") // 设置文本内容
+ color(Color.BLUE) // 字体颜色
+ fontSize(18f) // 字体大小
+ fontWeightBold() // 加粗
+ textAlignCenter() // 居中对齐
+ lines(2) // 最大显示2行
+ lineHeight(24f) // 行高
+ textShadow(2f, 2f, 2f, Color.GRAY) // 文字阴影
+ fontWeight400() // 设置字重为400
+ fontWeight500() // 设置字重为500
+ }
+}
+
+// 富文本组件
+RichText {
+ Span {
+ fontSize(16f)
+ text(\"这是\")
+ }
+ Span {
+ fontSize(18f)
+ color(Color.RED)
+ text(\"彩色\")
+ }
+ Span {
+ fontSize(22f)
+ fontWeightBold()
+ text(\"富文本\")
+ }
+}
+```
+
+核心属性说明：
+1. **文本控制**
+ - `text()`：设置文本内容
+ - `lines()`：最大行数（配合`lineBreakMargin`可实现折叠效果）
+ - `lineBreakMargin()`：最后一行折叠边距
+2. **样式控制**
+ - `color()`：支持Color对象或十六进制(0xAARRGGBB)
+ - `fontSize()`：单位SP（自动适配系统字体缩放）
+ - `fontWeight`系列：400/500/600/700四种字重
+ - `textDecoration`系列：下划线/删除线
+
+3. **布局控制**
+ - `textAlign`系列：左/中/右对齐
+ - `lineHeight()`：行高（需大于字体大小）
+ - `letterSpacing()`：字间距调整
+ - 不要有padding，用margin替代
+注意事项：
+1. 自定义字体需在Android/HarmonyOS端实现字体适配器，iOS需注册字体
+2. 富文本组件`RichText`通过组合多个`Span`实现混合样式
+3. 文本溢出处理建议组合使用`lines()`和`textOverFlowTail()`
+4. 阴影效果需同时设置`textShadow`和`boxShadow`实现文字+容器双层阴影

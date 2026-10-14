@@ -1,0 +1,53 @@
+检索信息：布局
+
+
+布局依赖引入：
+import com.tencent.kuikly.core.layout.FlexAlign
+import com.tencent.kuikly.core.layout.FlexDirection
+import com.tencent.kuikly.core.layout.FlexJustifyContent
+
+
+
+Kuikly使用跨平台的标准Flexbox作为布局方式
+### flexDirection设置排列方式
+函数原型为flexDirection(flexDirection: FlexDirection)，FlexDirection取值如下：
+* COLUMN	孩子从上往下排列布局
+* COLUMN_REVERSE	孩子从下往上排列布局
+* ROW	孩子从左往右排列布局
+* ROW_REVERSE	孩子从右往左排列布局
+
+
+
+### justifyContent设置主轴方向上对齐方式
+justifyContent有一系列的设置方法：
+* justifyContentFlexStart: 主轴开始的位置进行对齐
+* justifyContentFlexEnd: 主轴结束的位置进行对齐
+* justifyContentCenter: 主轴的中间位置进行对齐
+* justifyContentSpaceBetween: 主轴两端对齐，子孩子之间的间隔都相等
+* justifyContentSpaceAround: 每个项目两侧的间隔相等。所以，子孩子之间的间隔比项目与边框的间隔大一倍
+* justifyContentSpaceEvenly: Flex Item之间的间距相等，包括与边缘位置的距离
+
+布局使用示例：
+
+```kotlin
+View {
+    attr {
+        //水平布局，从左到右
+        flexDirection(FlexDirection.ROW)
+        //水平布局，从右向左
+        flexDirection(FlexDirection.ROW_REVERSE)
+        //垂直布局，从上到下
+        flexDirection(FlexDirection.COLUMN)
+        //垂直布局，从下到上
+        flexDirection(FlexDirection.COLUMN_REVERSE)
+        //主轴中间对齐
+        justifyContentCenter()
+        //主轴开始的位置进行对齐
+        justifyContentFlexStart()
+        //主轴结束的位置进行对齐
+        justifyContentFlexEnd()
+        //绝对位置布局
+        positionAbsolute()
+    }
+}
+

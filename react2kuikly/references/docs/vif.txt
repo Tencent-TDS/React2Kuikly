@@ -1,0 +1,26 @@
+检索信息：动态隐藏显示
+
+
+依赖引入：
+import com.tencent.kuikly.core.directives.*
+
+使用示例：
+private var uiState by observable(0) // 声明一个代表UI状态的响应式字段
+
+vif({ ctx.uiState == 1 }) {
+                Text {
+                    attr {
+                        text("in vif")
+                        fontSize(20f)
+                        fontWeightBold()
+                    }
+                }
+            }
+            velseif( {ctx.uiState == 2 }) {
+                View { 
+                    attr { 
+                        size(100f, 100f)
+                        backgroundColor(Color.GREEN)
+                    }
+                }
+            }

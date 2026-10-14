@@ -1,0 +1,43 @@
+【Refresh组件】
+依赖引入：import com.tencent.kuikly.core.views.Refresh
+
+基础信息：
+1. 功能：为ListView提供下拉刷新能力
+2. 核心属性：
+ - refreshEnable：控制下拉刷新开关（默认false）
+ - contentInsetTopWhenEndDrag：设置下拉结束后列表的顶部边距
+ - refreshState：当前刷新状态（IDLE/PULLING/REFRESHING）
+
+3. 关键事件：
+ - refreshStateDidChange：监听状态变化事件
+ - pullingPercentageChanged：监听下拉百分比变化（0-1范围）
+
+4. 核心方法：
+ - beginRefresh(animated: Boolean)：触发刷新动作
+ - endRefresh(animated: Boolean)：结束刷新状态
+
+完整示例代码核心片段：
+Refresh {
+ event {
+ refreshStateDidChange { state ->
+ when(state) {
+ RefreshViewState.REFRESHING -> {
+ // 开始耗时操作
+ setTimeout(2000) {
+ // 刷新完成后调用
+ endRefresh()
+ }
+ }
+ RefreshViewState.PULLING -> {
+ // 更新提示文字
+ }
+ }
+ }
+ }
+}
+
+注意事项：
+1. 需要配合ListView组件使用
+2. 刷新完成后必须调用endRefresh()重置状态
+3. 可通过contentInsetTopWhenEndDrag控制下拉回弹位置
+4. 建议配合ActivityIndicator组件实现加载动画

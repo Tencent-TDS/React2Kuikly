@@ -1,0 +1,24 @@
+【如下代码的原有代码保留】
+1.M.client.invoke
+2.M.client.openScheme
+3.M.client.on,M.client.off
+4.M.user下所有方法
+M.user.login,M.user.getUin,M.user.getCookies,M.user.isLogin
+5.M.player下所有方法
+6.M.themeStyle下的所有变量
+8.clickReport,showReport,reportStat
+10.fetchModuleCGI,fetchModuleCGIWithPromise,prefetchModuleCGI
+11.fixUrl,getPic,
+12.hexToRgb,rgbToHex,rgb2hsb,hsb2rgb,hsb2rgbVal
+13.Platform.OS
+14.AsyncStorage.getItem，AsyncStorage.setItem,readData,saveData
+15.verHigherThan,M.compare(M.client.appVer, '140305')
+16.Dimensions下方法
+17.encodeHTML,decodeHTML,getUrlParam,getParam,getUrlParam
+
+【如下代码直接去掉，不用转化】
+1.M.client.init
+2.M.client.themeChange
+3.M.spd下所有方法
+4.M.ping下所有方法
+5.SDKTj

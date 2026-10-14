@@ -1,0 +1,116 @@
+检索信息：SliderPage组件
+
+依赖引入：import com.tencent.kuikly.core.views.compose.SliderPage
+
+基础属性说明：
+1. defaultPageIndex: 初始显示页面索引(Int类型，默认0)
+2. isHorizontal: 水平方向展示(Boolean类型，默认true)
+3. pageItemWidth: 页面项宽度(Float类型，默认视图宽度)
+4. pageItemHeight: 页面项高度(Float类型，默认视图高度)
+5. loopPlayIntervalTimeMs: 轮播间隔(Int类型，单位毫秒，0表示不轮播)
+6. itemCount: 页面项数量(Int类型，默认0)
+7. scrollEnable: 是否允许手势滑动(Boolean类型，默认true)
+
+核心方法说明：
+- initSliderItems(dataList, creator)：初始化数据源和视图构造器。泛型方法，签名为 `fun <T> initSliderItems(dataList: List<T>, creator: SliderItemCreator<T>)`，其中 `SliderItemCreator<T>` 类型为 `PageListView<*, *>.(item: T) -> Unit`。dataList 是数据列表，creator 是根据每个数据项构建视图的 lambda。
+- startLoopPlayIfNeed()：启动自动轮播
+- stopLoopPlayIfNeed()：停止自动轮播
+- autoLoopPlay()：设置自动循环播放
+- scrollToPage(index, animation)：滚动到指定页面
+
+事件说明：
+pageIndexDidChanged：页面切换事件回调，返回包含index键的JSONObject参数
+
+## 用法一：数据驱动轮播图（经典用法）
+
+传入数据模型列表，在 creator 中根据数据构建视图：
+
+```kotlin
+SliderPage {
+    attr {
+        isHorizontal = true
+        pageItemWidth = ctx.pageData.pageViewWidth
+        pageItemHeight = ctx.pageData.pageViewWidth
+        initSliderItems(ctx.pageItemList) { item ->
+            // 根据数据项构建视图
+            View {
+                attr {
+                    backgroundColor(item.bgColor)
+                    allCenter()
+                }
+                Text {
+                    attr {
+                        text(item.title)
+                        fontSize(20f)
+                    }
+                }
+            }
+        }
+    }
+    event {
+        pageIndexDidChanged { params ->
+            val index = (params as JSONObject).optInt("index")
+            // 处理页面切换逻辑
+        }
+    }
+}
+```
+
+## 用法二：tab切换逻辑
+
+当页面有多个 Tab 页面内容且需要滑动切换tab内容时，可以将 Tab 索引列表（或任意标识列表）作为数据源传给 initSliderItems，在 creator lambda 中根据索引/标识 when 分支构建不同的视图内容。
+
+```kotlin
+// 定义 Tab 数据列表
+val tabItems = listOf(0, 1, 2) // 或 listOf("推荐", "最新", "热门") 等
+
+SliderPage {
+    attr {
+        isHorizontal = true
+        defaultPageIndex = ctx.currentTabIndex
+        pageItemWidth = ctx.pageData.pageViewWidth
+        pageItemHeight = contentHeight
+        loopPlayIntervalTimeMs = 0 // 非轮播场景设为0
+        scrollEnable = true // 允许手势滑动切换
+
+        initSliderItems(tabItems) { tabIndex ->
+            // 根据 tabIndex 构建不同的页面内容
+            when (tabIndex) {
+                0 -> {
+                    // 第一个 Tab 页内容
+                    List {
+                        attr { flex(1f) }
+                        // ... 页面内容
+                    }
+                }
+                1 -> {
+                    // 第二个 Tab 页内容
+                    List {
+                        attr { flex(1f) }
+                        // ... 页面内容
+                    }
+                }
+                2 -> {
+                    // 第三个 Tab 页内容
+                    List {
+                        attr { flex(1f) }
+                        // ... 页面内容
+                    }
+                }
+            }
+        }
+    }
+    event {
+        pageIndexDidChanged { params ->
+            ctx.currentTabIndex = (params as JSONObject).optInt("index")
+        }
+    }
+}
+```
+
+注意事项：
+1. initSliderItems 是数据驱动的，但 creator lambda 中可以构建任意复杂的视图，因此完全可以替代 ViewPager 的 children 模式——只需将索引列表作为数据源，在 creator 中根据索引 when 分支构建视图即可
+2. 作为 Tab 页面切换使用时，loopPlayIntervalTimeMs 应设为 0（禁用自动轮播）isHorizontal 属性应设为 true
+3. 自动轮播需设置 loopPlayIntervalTimeMs 大于 0 并调用 startLoopPlayIfNeed
+4. 页面索引变化事件返回的是 JSONObject 类型参数，需通过 optInt("index") 获取当前索引
+5. 轮播方向通过 isHorizontal 属性控制，支持水平/垂直两种布局方式

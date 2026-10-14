@@ -1,0 +1,43 @@
+检索信息：Canvas组件 
+依赖引入：import com.tencent.kuikly.core.views.Canvas 
+完整示例代码： 
+```kotlin
+Canvas({
+ attr {
+ absolutePosition(0f, 0f, 0f, 0f)
+ }
+}) { context, width, height ->
+ // 绘制逻辑
+ context.beginPath()
+ context.strokeStyle(Color.RED)
+ context.lineWidth(2.0f)
+ context.moveTo(0f, 0f)
+ context.lineTo(width, height)
+ context.stroke()
+}
+```
+
+核心方法说明： 
+1. 路径操作： 
+- `beginPath()` 创建新路径 
+- `moveTo(x,y)` 移动画笔到指定坐标 
+- `lineTo(x,y)` 绘制直线到目标坐标 
+- `arc(x,y,radius,startAngle,endAngle,counterclockwise)` 绘制圆弧 
+
+2. 样式设置： 
+- `strokeStyle(color)` 设置描边颜色 
+- `fillStyle(color)` 设置填充颜色 
+- `lineWidth(width)` 设置线宽 
+- `setLineDash(intervals)` 设置虚线样式 
+
+3. 绘制控制： 
+- `stroke()` 执行描边 
+- `fill()` 执行填充 
+- `closePath()` 闭合路径 
+
+注意事项： 
+1. 必须通过回调参数中的CanvasContext进行绘制操作 
+2. 坐标系原点(0,0)位于组件左上角 
+3. 建议使用absolutePosition进行绝对定位布局 
+4. 复杂图形需要组合使用beginPath/moveTo/lineTo等方法 
+5. 虚线样式在Android API < 29可能表现不一致

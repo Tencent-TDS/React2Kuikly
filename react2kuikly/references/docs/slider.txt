@@ -1,0 +1,52 @@
+检索信息：Slider组件
+
+Slider组件是滑动选择器，适用于拖动进度条场景。以下是其基础信息：
+
+**属性说明：**
+- `currentProgress`：当前进度百分比(0-1)
+- `progressViewCreator`：自定义进度视图（可选）
+- `trackViewCreator`：自定义轨道视图（可选）
+- `thumbViewCreator`：自定义滑块视图（可选）
+- `progressColor`：进度条颜色
+- `trackColor`：轨道背景颜色
+- `thumbColor`：滑块颜色
+- `trackThickness`：轨道粗细
+- `thumbSize`：滑块尺寸
+- `sliderDirection`：滑动方向（默认横向）
+
+**事件说明：**
+- `progressDidChanged`：进度变化回调
+- `beginDragSlider`：开始拖动回调
+- `endDragSlider`：结束拖动回调
+
+完整示例代码：
+```kotlin
+Slider {
+ attr {
+ width(300f)
+ height(30f)
+ currentProgress(0.5f)
+ trackColor(Color.GRAY)
+ thumbColor(Color.BLUE)
+ progressColor(Color.RED)
+ sliderDirection(true) // 横向
+ }
+ event {
+ progressDidChanged { progress ->
+ // 处理进度变化
+ }
+ beginDragSlider {
+ // 拖动开始
+ }
+ endDragSlider {
+ // 拖动结束
+ }
+ }
+}
+```
+
+注意事项：
+1. 进度值范围需控制在[0,1]之间
+2. 自定义视图创建器为可选参数，不设置时使用默认样式
+3. 纵向滑动时需设置`sliderDirection(false)`并调整宽高比例
+4. 事件回调中的手势参数可用于实现高级交互效果

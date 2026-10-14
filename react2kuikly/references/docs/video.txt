@@ -1,0 +1,52 @@
+检索信息：Video组件
+
+依赖引入：import com.tencent.kuikly.core.views.Video
+
+完整示例代码：
+```kotlin
+Video {
+ attr {
+ size(300f, 200f)
+ src("https://example.com/video.mp4")
+ resizeModeToCover()
+ muted(true)
+ rate(1.5f)
+ }
+ 
+ event {
+ playStateDidChanged { state, extInfo ->
+ when(state) {
+ PlayState.PLAYING -> println(\"开始播放\")
+ PlayState.PAUSED -> println(\"暂停播放\")
+ PlayState.STOPPED -> println(\"停止播放\")
+ }
+ }
+ 
+ playTimeDidChanged { curTime, totalTime ->
+ println(\"当前进度：$curTime/$totalTime 毫秒\")
+ }
+ 
+ firstFrameDidDisplay {
+ println(\"首帧已显示\")
+ }
+ }
+}
+```
+
+属性说明：
+1. src：设置视频源URL（必填）
+2. playControl：控制播放状态（PLAY/PAUSE/STOP）
+3. resizeModeToCover/Contain/Stretch：视频画面适配模式
+4. muted：静音开关（默认false）
+5. rate：播放速率（支持1.0/1.25/1.5/2.0）
+
+事件说明：
+1. playStateDidChanged：播放状态变化时触发
+2. playTimeDidChanged：播放进度变化时触发（每秒回调约16次）
+3. firstFrameDidDisplay：视频首帧渲染时触发
+
+注意事项：
+1. resizeModeToCover会裁剪视频画面，Contain会保留黑边，Stretch会拉伸变形
+2. muted属性需要在视频加载完成后设置才有效
+3. rate属性仅支持特定倍速值，非标准值会自动取最接近的有效值
+4. 首帧显示事件适合用于隐藏封面图等场景

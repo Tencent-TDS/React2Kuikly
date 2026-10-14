@@ -1,0 +1,61 @@
+【Image组件】
+依赖引入：Image组件属于Kuikly核心组件，无需额外依赖 
+
+支持所有基础属性，此外还包含如下的属性
+
+完整示例代码：
+```kotlin
+@Page(\"demo_page\")
+internal class ImageDemoPage : BasePager() {
+ override fun body(): ViewBuilder {
+ return {
+ attr { allCenter() }
+
+ // 网络图片示例
+ Image {
+ attr {
+ size(240f, 180f)
+ src(\"https://example.com/image.jpg\")
+ resizeCover()
+ placeholderSrc(\"https://example.com/placeholder.jpg\")
+ blurRadius(2f)
+ tintColor(Color.RED)
+ }
+ event {
+ loadSuccess { params ->
+ KLog.i(\"ImageLoad\", \"加载成功：${params.src}\")
+ }
+ loadFailure { params ->
+ KLog.e(\"ImageLoad\", \"加载失败：${params.src} 错误码：${params.errorCode}\")
+ }
+ loadResolution { params ->
+ KLog.d(\"ImageRes\", \"分辨率：${params.width}x${params.height}\")
+ }
+ }
+ }
+
+ // assets图片示例
+ Image {
+ attr {
+ size(100f, 100f)
+ src(ImageUri.pageAssets(\"icon.png\"))
+ }
+ }
+ }
+ }
+}
+```
+
+Image resize模式（resizeMode）完整列表：
+- resizeCover()   // 等比缩放，填满容器（可能裁剪，默认模式）
+- resizeContain() // 等比缩放，完整显示（可能留白）
+- resizeStretch() // 拉伸填满容器（可能变形）
+- resizeCenter()  // 居中显示，不缩放
+
+注意事项： 
+1. 网络图片需要确保URL有效性，支持HTTP/HTTPS协议
+2. assets图片需将文件放置在项目的assets目录下，1.1+版本支持 
+3. 文件路径图片需要先通过Native模块获取本地文件路径 
+4. 建议始终设置placeholderSrc作为加载占位图 
+5. blurRadius值过大会影响性能，建议不超过10f 
+6. tintColor会覆盖图片非透明区域颜色，适用于单色图标染色

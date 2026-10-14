@@ -1,0 +1,210 @@
+【kuikly介绍】
+Kuikly是基于KMM的跨端开发框架，该框架使用Kotlin语言进行开发
+kuikly提供了一系列UI组件和语法特性
+
+【Pager生命周期】
+Kuikly页面（BasePager）的完整生命周期顺序：
+created() → body() → mounted() → didAppear() → willDisappear() → didDisappear() → destroy()
+- created(): 页面创建，适合初始化数据、解析参数
+- body(): 声明页面UI结构
+- mounted(): 首帧布局完成，适合获取组件尺寸
+- didAppear(): 页面可见时触发（每次从后台回来也触发）
+- willDisappear(): 页面即将不可见
+- didDisappear(): 页面已不可见
+- destroy(): 页面销毁，释放资源
+
+【语句指令】
+依赖引入：
+import com.tencent.kuikly.core.directives.*
+
+循环指令vfor,vforIndex,vforLazy
+条件指令vif,velseif,velse
+绑定指令vbind
+
+#vfor
+List {
+    attr {
+        flex(1f)
+    }
+    vfor({ ctx.list }) { item ->
+        Text {
+            attr {
+                text(item)
+                fontSize(20f)
+                fontWeightBold()
+            }
+        }
+    }
+}
+#vforIndex
+vforIndex语句指令是vfor的补充，它与vfor的区别是，vforIndex语句指令的闭包除了列表元素外，还会有index和count两个参数，用于表示当前循环的索引值。举个例子:
+vforIndex({ ctx.list }) { item, index, _ ->
+    View {
+        attr {
+            margin(5f)
+            backgroundColor(if (index % 2 == 0) Color.GRAY else Color.TRANSPARENT)
+            borderRadius(5f)
+        }
+        Text {
+            attr {
+                text(item)
+            }
+        }
+    }
+}
+
+#条件语句指令
+使用示例：
+private var uiState by observable(0) // 声明一个代表UI状态的响应式字段
+vif({ ctx.uiState == 1 }) {
+    View { 
+        attr { 
+            size(100f, 100f)
+            backgroundColor(Color.BLUE)
+        }
+    }
+}
+velseif( {ctx.uiState == 2 }) {
+    View { 
+        attr { 
+            size(100f, 100f)
+            backgroundColor(Color.GREEN)
+        }
+    }
+}
+velse{
+    View { 
+        attr { 
+            size(100f, 100f)
+            backgroundColor(Color.RED)
+        }
+    }
+}
+#绑定语句指令
+#vbind
+vbind语句，响应式字段为固定值、枚举、类型时使用, 不同的值绑定不同的UI。
+如果UI需要在绑定的响应式字段发生变化时重新渲染，也可以使用vbind场景。
+注意：vbind中用when进行UI绑定，不要再出现if/else
+vbind({ ctx.uiState }) {
+    when (ctx.uiState) {
+        1 -> {
+            Text {
+                attr {
+                    text("1111")
+                }
+            }
+        }
+        2 -> {
+            Text {
+                attr {
+                    text("2222")
+                }
+            }
+        }
+    }
+}
+
+【组合组件】
+在Kuikly编写UI时, 可将页面UI分模块，把模块封装成ComposeView文件, 然后暴露给各个Kuikly页面使用
+
+1. 先封装组合组件文件TabView.kt
+import com.tencent.kuikly.core.base.ComposeView
+import com.tencent.kuikly.core.base.ComposeAttr
+import com.tencent.kuikly.core.base.ComposeEvent
+import com.tencent.kuikly.core.base.ViewBuilder
+import com.tencent.kuikly.core.base.ViewContainer
+import com.tencent.kuikly.core.reactive.handler.observable
+import com.tencent.kuikly.core.views.Text
+import com.tencent.kuikly.core.views.View
+import com.example.business.bizkuikly.pages.feat.newsong.viewmodel.NewSongViewModel
+internal class TabView : ComposeView<TabViewAttr, TabViewEvent>() {
+    override fun createEvent(): TabViewEvent {
+        return TabViewEvent()
+    }
+    override fun createAttr(): TabViewAttr {
+        return TabViewAttr()
+    }
+    override fun body(): ViewBuilder {
+        val ctx = this
+        return {
+            View {
+                attr {
+                    flexDirectionRow()
+                }
+                Text {
+                    attr {
+                        text("新歌")                                       
+                    }
+                    event {
+                        click {
+                            ctx.event.switchTabCb(ctx.attr.curTab)
+                        }
+                    }
+                }
+                Text {
+                    attr {
+                        text("新视频")                        
+                    }
+                    event {
+                        click {
+                            ctx.event.switchTabCb(ctx.attr.curTab)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+internal class TabViewAttr : ComposeAttr() {
+    var curTab by observable<Int>(NewSongViewModel.SONG_TAB)
+}
+internal class TabViewEvent : ComposeEvent() {
+    var switchTabCb: (tab: Int) -> Unit = {}
+}
+internal fun ViewContainer<*, *>.TabView(init: TabView.() -> Unit) {
+    addChild(TabView(), init)
+}
+2.调用组合组件
+internal class TestPage : BasePager() {
+    override fun body(): ViewBuilder {
+        val ctx = this
+        return {
+            TabView {
+                attr {
+                    curTab = ctx.viewmodel.curTab
+                }
+                event {
+                    switchTabCb = { tab: Int ->
+                        ctx.switchTab(tab)
+                    }
+                }
+            }
+        }
+    }
+}
+【页面中渲染方法调用】
+// 渲染方法声明
+private fun autoView(style: Int): ViewBuilder {    
+    return {
+        View {
+            attr {
+                height(46f.pxw())               
+            }
+            Text {
+                attr {
+                    text("自动续费提醒${style}")
+                    fontSize(22f.pxw())
+                }
+            }
+        }
+    }
+}
+
+override fun body(): ViewBuilder {
+    val ctx = this
+    return {
+        apply(ctx.autoView(message.style)) // 需要用apply包住被调用的渲染函数
+    }
+}
+
+

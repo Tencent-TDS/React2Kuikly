@@ -1,0 +1,49 @@
+【WaterfallList组件】
+依赖引入：import com.tencent.kuikly.core.views.WaterfallList 
+
+完整示例代码： 
+```kotlin
+WaterfallList {
+ attr {
+ flex(1f)
+ columnCount(2) // 设置2列
+ listWidth(pagerData.pageViewWidth) // 必须设置列表宽度
+ lineSpacing(10f) // 行间距10单位
+ itemSpacing(10f) // 列间距10单位
+ contentPadding(8f) // 内容内边距
+ scrollEnable(true) // 启用滚动
+ bouncesEnable(true) // 启用回弹效果
+ }
+ 
+ // 瀑布流内容项
+ vfor({ dataList }) { item ->
+ View {
+ attr {
+ height(item.height)
+ backgroundColor(item.bgColor)
+ borderRadius(8f)
+ }
+ Text(text = item.title)
+ }
+ }
+ 
+ // 滚动事件监听
+ event {
+ scroll { params ->
+ println(\"当前滚动偏移Y: ${params.offsetY}\")
+ }
+ scrollEnd { params ->
+ println(\"滚动结束位置Y: ${params.offsetY}\")
+ }
+ }
+}
+```
+
+注意事项： 
+1. **必须设置listWidth**：该属性决定瀑布流的布局基准宽度 
+2. **列数自适应**：通过columnCount控制列数，未设置时默认为1列 
+3. **间距控制**：itemSpacing控制列间距，lineSpacing控制行间距，默认均为0 
+4. **性能优化**：可通过firstContentLoadMaxIndex限制首屏加载数量 
+5. **滚动参数**：scroll事件回调包含contentHeight/viewHeight等关键布局参数 
+6. **独占布局**：子视图宽度超过单列宽度时会独占整行 
+7. **动态修改**：支持运行时修改子视图高度触发重新布局

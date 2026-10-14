@@ -1,0 +1,22 @@
+检索信息：平台判断、platform
+
+
+依赖引入： import com.tencent.kuikly.core.base.event.*
+
+
+介绍：
+Kuikly中，每个页面都从基类中继承了pageData，在视图、VM中想要知道当前处于那个平台，可以先获取当前页面，再读取页面pageData的isIOS属性判断是否为iOS平台。
+
+示例代码：
+```kotlin
+//先获取basePager
+val basePager = PagerManager.getCurrentPager() as? JztBasePager
+// 通过basePager的pageData获取当前平台是否为iOS
+if (basePager?.pageData?.isIOS == true) {
+    // iOS平台
+} else {
+    // Android平台
+}
+
+```
+

@@ -1,0 +1,26 @@
+检索信息：ScrollPicker组件
+依赖引入：import com.tencent.kuikly.core.views.ScrollPicker
+完整示例代码：
+```kotlin
+ScrollPicker(arrayOf(\"A\",\"B\",\"C\",\"D\",\"E\",\"F\")) {
+ attr {
+ itemWidth = 100f // 单个选项宽度
+ itemHeight = 30f // 单个选项高度
+ countPerScreen = 3 // 每屏显示3个选项
+ itemBackGroundColor = Color.GREEN // 选项背景色
+ itemTextColor = Color.BLACK // 文字颜色
+ borderRadius(8f) // 圆角半径
+ }
+ event {
+ dragEndEvent { value, index -> // 滚动停止事件
+ // value: 选中项的值，index: 选中项索引
+ }
+ }
+}
+```
+注意事项：
+1. 必须设置itemWidth/itemHeight定义选项尺寸
+2. countPerScreen建议设置为奇数以保证对称显示
+3. 通过dragEndEvent回调获取最终选中值
+4. 支持多列组合实现级联选择（如示例中的省市联动）
+5. 可通过defaultIndex参数设置初始选中位置

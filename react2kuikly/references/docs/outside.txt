@@ -1,0 +1,45 @@
+检索信息：Outside组件
+依赖引入：无特殊依赖（属于Kuikly基础组件）
+完整示例代码：
+```kotlin
+@Page(\"dialog_demo\")
+class DialogPage : BasePager() {
+ override fun build(): ViewBuilder {
+ return {
+ // 设置背景样式
+ attr { 
+ backgroundColor(Color.parse(\"#80000000\")) // 半透明黑色背景
+ }
+ 
+ // Outside组件作为遮罩层
+ Outside(width = pagerData.pageViewWidth) {
+ // 点击空白区域关闭页面
+ this@DialogPage.closePage()
+ }
+ 
+ // 弹窗内容
+ View {
+ attr {
+ size(300f, 200f)
+ backgroundColor(Color.WHITE)
+ borderRadius(8f)
+ allCenter()
+ }
+ Text {
+ attr {
+ text(\"这是弹窗内容\")
+ fontSize(18f)
+ textColor(Color.BLACK)
+ }
+ }
+ }
+ }
+ }
+}
+```
+注意事项：
+1. Outside组件通常作为弹窗/浮层的背景层使用
+2. 需要手动设置width参数（一般取pagerData.pageViewWidth）
+3. 点击事件回调中需自行处理关闭逻辑（如closePage）
+4. 建议配合absolutePosition布局使用
+5. 背景样式需通过父容器的backgroundColor单独设置

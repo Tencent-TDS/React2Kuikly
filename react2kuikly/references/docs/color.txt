@@ -1,0 +1,12 @@
+检索信息：颜色、Color
+
+依赖引入：
+import com.example.business.bizkuikly.pages.extension.parseColor
+
+使用示例：
+View {
+    attr {
+        // 设置背景色，且使用白色作为默认颜色
+        backgroundColor("#800000".parseColor(Color.WHITE))
+    }
+}

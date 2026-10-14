@@ -1,0 +1,9 @@
+检索信息：打开链接：jumpTolink
+
+
+依赖引入：import com.example.business.bizkuikly.pages.atoms.JS2Kuikly.jumpTolink
+
+
+
+使用示例：
+jumpTolink(url)

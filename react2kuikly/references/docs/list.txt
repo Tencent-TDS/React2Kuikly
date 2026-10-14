@@ -1,0 +1,92 @@
+【List组件】
+
+依赖引入：
+```kotlin
+import com.tencent.kuikly.core.views.List
+```
+
+属性：
+支持所有基础属性，此外List特有属性如下
+#
+```kotlin
+List {
+ attr {
+ scrollEnable(true) // 是否允许滑动（默认true）
+ bouncesEnable(true) // 是否开启回弹效果（默认true）
+ showScrollerIndicator(true) // 显示滚动条（默认true）
+ flexDirection(FlexDirection.COLUMN) // 布局方向（COLUMN/ROW）
+ pagingEnable(false) // 分页开关
+ firstContentLoadMaxIndex(20) // 首屏最大加载条数
+ preloadViewDistance(500f) // 预加载距离
+ }
+}
+```
+
+核心事件：
+```kotlin
+event {
+ scroll { params -> // 滚动事件
+ val offsetY = params.offsetY
+ }
+ scrollEnd { params -> // 滚动结束
+ // 处理逻辑
+ }
+ contentSizeChanged { width, height -> // 内容尺寸变化
+ // 更新布局
+ }
+}
+```
+
+关键方法：
+```kotlin
+// 设置滚动位置
+setContentOffset(offsetX = 0f, offsetY = 100f, animated = true)
+
+// 设置内容边距
+setContentInset(top = 10f, left = 0f, bottom = 20f, right = 0f)
+```
+
+完整示例代码：
+```kotlin
+@Page(\"DemoListPage\")
+internal class DemoListPage : BasePager() {
+ private var data by observableList<String>()
+
+ override fun body(): ViewBuilder {
+ return {
+ List {
+ attr {
+ flex(1f)
+ margin(16f)
+ backgroundColor(Color.WHITE)
+ }
+ 
+ vfor({ data }) { item ->
+ View {
+ attr {
+ height(60f)
+ margin(8f)
+ backgroundColor(0xFFF0F0F0)
+ }
+ RichText {
+ attr { centerVertical() }
+ Span { text(item) }
+ }
+ }
+ }
+ }
+ }
+ }
+
+ override fun created() {
+ data.addAll(listOf(\"Item 1\", \"Item 2\", \"Item 3\", \"Item 4\"))
+ }
+}
+```
+
+注意事项：
+1. 使用`vfor`指令实现动态列表渲染
+2. 列表项建议设置固定高度优化性能
+3. 大数据量列表需配合`firstContentLoadMaxIndex`优化首屏
+4. 水平列表需设置`flexDirection(FlexDirection.ROW)`
+5. 绝对定位元素需设置`positionType(FlexPositionType.ABSOLUTE)`

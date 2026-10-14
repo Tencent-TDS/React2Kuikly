@@ -1,0 +1,21 @@
+检索信息：ActivityIndicator组件 
+依赖引入：import com.tencent.kuikly.core.views.ActivityIndicator 
+基础信息： 
+1. ActivityIndicator 是圆形加载指示器，iOS系统默认尺寸为20f，多端统一固定为20f 
+2. 修改显示尺寸需通过缩放属性（如`transform(Scale(1.5f, 1.5f))`） 
+3. 支持灰色样式属性`isGrayStyle`，该属性需在初始化时设置且不可动态修改 
+
+完整示例代码： 
+```kotlin
+ActivityIndicator {
+ attr {
+ isGrayStyle(true) // 设置为灰色样式
+ transform(Scale(1.5f, 1.5f)) // 缩放1.5倍
+ }
+}
+```
+
+注意事项： 
+- 默认尺寸固定为20x20，不可直接修改width/height属性 
+- isGrayStyle属性只能在初始化时设置，运行时无法动态切换样式 
+- 若需要不同颜色样式，建议通过transform组合缩放和透明度调整实现

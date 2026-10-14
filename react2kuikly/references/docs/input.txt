@@ -1,0 +1,42 @@
+【Input组件】
+依赖引入：import com.tencent.kuikly.core.views.Input 
+
+支持所有基础属性，此外还包含如下的属性
+完整示例代码：
+```kotlin
+// 基础属性示例
+Input {
+ attr {
+ size(200f, 40f)
+ text(\"初始文本\")
+ fontSize(16f)
+ color(Color.BLACK)
+ placeholder(\"请输入内容\")
+ tintColor(Color.BLUE)
+ maxTextLength(20)
+ autofocus(true)
+ }
+ 
+ event {
+ textDidChange { params ->
+ // 文本变化监听
+ val currentText = params.text
+ }
+ 
+ inputFocus { params ->
+ // 获取焦点事件
+ }
+ 
+ inputReturn { params ->
+ // 回车键事件
+ }
+ }
+}
+```
+
+注意事项：
+1. 富文本功能（inputSpans）在鸿蒙系统暂不支持
+2. 使用maxTextLength时需配合textLengthBeyondLimit事件处理超限情况
+3. 自动聚焦（autofocus）会触发软键盘自动弹出
+4. 光标位置操作（cursorIndex/setCursorIndex）需要异步回调处理
+5. 输入框样式需通过backgroundColor等基础属性配合border等样式属性实现

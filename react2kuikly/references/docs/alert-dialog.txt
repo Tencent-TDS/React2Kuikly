@@ -1,0 +1,57 @@
+检索信息：AlertDialog组件
+
+依赖引入：根据上下文示例推断，通常为：
+```kotlin
+import com.tencent.kuikly.core.views.AlertDialog
+```
+
+完整示例代码：
+```kotlin
+@Page(\"demo_page\")
+internal class TestPage : BasePager() {
+ private var showAlert by observable(true) // 响应式变量控制显示
+
+ override fun body(): ViewBuilder {
+ val ctx = this
+ return {
+ AlertDialog {
+ attr {
+ showAlert(ctx.showAlert) // 必须设置的显示控制
+ title(\"我是Alert标题\") // 设置标题（可选）
+ message(\"alert内容\") // 设置内容（可选）
+ actionButtons(\"取消\", \"确定\") // 必须设置操作按钮
+ actionButtonsCustomAttr( // 自定义按钮样式（可选）
+ { color = Color.RED }, // 第一个按钮样式（取消）
+ { fontWeight = 700 } // 第二个按钮样式（确定）
+ )
+ inWindow(true) // 全屏显示（可选）
+ }
+ event {
+ clickActionButton { index -> // 按钮点击回调
+ ctx.showAlert = false // 点击后关闭弹窗
+ }
+ willDismiss { // 系统返回/右滑关闭回调
+ ctx.showAlert = false
+ }
+ }
+ }
+ }
+ }
+}
+```
+
+核心属性说明：
+1. showAlert：必须设置的布尔值，控制弹窗显示
+2. title/message：文本内容设置（至少二选一）
+3. actionButtons：最少1个最多3个按钮文本设置
+4. inWindow：设置为true时弹窗会覆盖状态栏
+
+事件处理要点：
+1. clickActionButton回调返回按钮索引（0表示第一个按钮）
+2. 必须手动修改showAlert变量为false来关闭弹窗
+3. willDismiss事件可用于处理物理返回键关闭
+
+自定义能力：
+1. 通过customContentView可完全自定义内容区域UI
+2. 通过customBackgroundView可自定义蒙层背景
+3. actionButtonsCustomAttr支持对每个按钮单独设置文字样式

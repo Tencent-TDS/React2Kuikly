@@ -1,0 +1,31 @@
+【Checkbox组件】
+
+依赖引入：import com.tencent.kuikly.core.views.CheckBox
+
+完整示例代码：
+```kotlin
+CheckBox {
+ attr {
+ size(30f, 30f)
+ checked(true) // 设置初始选中状态
+ defaultImageSrc(\"https://example.com/default.png\") // 默认状态图片
+ checkedImageSrc(\"https://example.com/checked.png\") // 选中状态图片
+ disableImageSrc(\"https://example.com/disabled.png\") // 禁用状态图片
+ borderRadius(15f) // 圆角设置
+ border(Border(2f, BorderStyle.SOLID, Color.GRAY)) // 边框样式
+ }
+ event {
+ checkedDidChanged { isChecked ->
+ // 处理选中状态变化
+ KLog.i(\"CheckBox\", \"当前状态：$isChecked\")
+ }
+ }
+}
+```
+
+注意事项：
+1. checked属性控制选中状态，默认false
+2. 图片资源和视图创建器可同时使用，图片资源优先级更高
+3. 禁用状态需同时设置disable=true和disableImageSrc/disabledViewCreator
+4. 自定义视图时需通过checkedViewCreator/defaultViewCreator设置不同状态下的视图
+5. 事件监听使用checkedDidChanged回调，返回布尔类型参数表示当前选中状态

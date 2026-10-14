@@ -1,0 +1,62 @@
+【PageList组件】
+
+依赖引入：import com.tencent.kuikly.core.views.PageList
+
+基础信息：
+1. 组件特性：
+- 每个Item的宽高与PageList容器相同
+- 支持分页滑动效果
+- 支持横向/纵向两种布局方向
+
+支持所有基础属性，此外还包含如下的属性
+2. 核心属性：
+```kotlin
+pageItemWidth(width: Float) // 设置Item宽度
+pageItemHeight(height: Float) // 设置Item高度
+pageDirection(isHorizontal: Boolean) // 布局方向(true=横向)
+defaultPageIndex(defaultIndex: Int) // 默认显示页索引
+keepItemAlive(alive: Boolean) // 是否保持Item内存
+offscreenPageLimit(value: Int) // 离屏缓存页数(仅keepItemAlive=false时生效)
+```
+
+3. 关键事件：
+```kotlin
+pageIndexDidChanged { params ->
+ val index = params.optInt(\"index\")
+ // 处理页索引变化逻辑
+}
+```
+
+完整示例代码：
+```kotlin
+PageList {
+ attr {
+ pageItemWidth(375f) // 设置Item宽度为屏幕宽度
+ pageItemHeight(600f) // 设置Item高度
+ pageDirection(true) // 横向布局
+ keepItemAlive(true) // 保持Item内存
+ offscreenPageLimit(2) // 缓存2个离屏页
+ }
+ 
+ vfor({ dataList }) { item ->
+ // 每个分页Item的布局
+ View { 
+ // 自定义布局内容
+ }
+ }
+ 
+ event {
+ pageIndexDidChanged { params ->
+ val currentPage = params.optInt(\"index\")
+ // 更新分页指示器等逻辑
+ }
+ }
+}
+```
+
+注意事项：
+1. 必须同时设置pageItemWidth和pageItemHeight
+2. 横向布局时需确保容器宽度与pageItemWidth一致
+3. 大量数据时建议开启keepItemAlive提升性能
+4. 分页切换动画默认开启，可通过setContentOffset的animated参数控制
+5. 需要配合vfor指令实现动态数据绑定
